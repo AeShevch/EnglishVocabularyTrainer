@@ -13,7 +13,6 @@
     "import/resolver": {
       "node": {
         "extensions": [
-          ".js",
           ".ts",
           ".json"
         ]
