@@ -1,0 +1,137 @@
+{
+  "env": {
+    "es2021": true,
+    "browser": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": ["./tsconfig.json"]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".ts",
+          ".json"
+        ]
+      }
+    }
+  },
+  "extends": [
+    "airbnb",
+    "airbnb-typescript",
+    "prettier",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": [
+    "prettier"
+  ],
+  "rules": {
+    "arrow-body-style": "error",
+    "arrow-parens": "error",
+    "dot-notation": "off",
+    "semi": [
+      "error",
+      "always"
+    ],
+    "quotes": [
+      "error",
+      "backtick"
+    ],
+    "camelcase": "off",
+    "consistent-return": "off",
+    "import/extensions": "off",
+    "import/prefer-default-export": "off",
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "groups": [
+          "builtin",
+          "external",
+          "parent",
+          "sibling",
+          "index"
+        ]
+      }
+    ],
+    "import/no-unresolved": "off",
+    "@typescript-eslint/naming-convention": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error"
+    ],
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      {
+        "allowExpressions": true
+      }
+    ],
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "return"
+      },
+      {
+        "blankLine": "always",
+        "prev": [
+          "const",
+          "let",
+          "var"
+        ],
+        "next": "*"
+      },
+      {
+        "blankLine": "any",
+        "prev": [
+          "const",
+          "let",
+          "var"
+        ],
+        "next": [
+          "const",
+          "let",
+          "var"
+        ]
+      }
+    ],
+    "no-console": [
+      "error",
+      {
+        "allow": [
+          "warn",
+          "error"
+        ]
+      }
+    ],
+    "no-debugger": "error",
+    "no-param-reassign": [
+      "error",
+      {
+        "props": true,
+        "ignorePropertyModificationsFor": [
+          "state",
+          "self",
+          "ctx",
+          "swiper"
+        ]
+      }
+    ],
+    "no-lone-blocks": 2,
+    "no-use-before-define": "off",
+    "no-unused-vars": "off",
+    "no-undef": "off",
+    "no-shadow": "off",
+    "no-nested-ternary": "off"
+  }
+}
