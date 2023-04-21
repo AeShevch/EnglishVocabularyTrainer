@@ -5,5 +5,5 @@ export const generateInitialTrainingData = (trainingWords: string[]): TrainingSt
     letters: word.split(``),
     currentLetterIdx: 0,
     mistakesCount: 0,
-    finished: false,
+    completed: false,
   }));

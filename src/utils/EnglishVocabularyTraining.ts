@@ -1,4 +1,4 @@
-import { TRAINING_LENGTH } from "../const";
+import { MAX_MISTAKES_COUNT, TRAINING_LENGTH } from "../const";
 import { TrainingStep } from "../types";
 
 import { generateInitialTrainingData } from "./generateInitialTrainingData";
@@ -9,28 +9,36 @@ export class EnglishVocabularyTraining {
 
   private currentStep: number;
 
-  constructor(words: [string, ...string[]]) {
+  constructor(words: string[], initialData?: TrainingStep[]) {
+    if (!words || !words.length) {
+      throw new Error(`No words for training given!`);
+    }
+
     const randomTrainingWords = getRandomArrayElements(words, TRAINING_LENGTH);
 
-    this.training = generateInitialTrainingData(randomTrainingWords);
+    this.training = initialData || generateInitialTrainingData(randomTrainingWords);
     this.currentStep = 0;
   }
 
-  public inputLetter(enteredLetter: string): void {
-    const currentTrainingStep = this.training[this.currentStep];
+  public static readonly maxMistakesCount: number = MAX_MISTAKES_COUNT;
 
-    if (this.checkLetter(enteredLetter)) {
-      currentTrainingStep.currentLetterIdx += 1;
+  public inputLetter(enteredLetter: string): void {
+    if (this.isCorrectLetter(enteredLetter)) {
+      this.nextLetter();
     } else {
-      currentTrainingStep.mistakesCount += 1;
+      this.increaseMistakesCount();
+    }
+
+    if (this.isLastMistake() || this.isLastLetter()) {
+      this.setCurrentQuestionCompleted();
     }
   }
 
-  public nextStep(): void {
+  public nextQuestion(): void {
     this.changeStep(this.currentStep + 1);
   }
 
-  public prevStep(): void {
+  public prevQuestion(): void {
     this.changeStep(this.currentStep - 1);
   }
 
@@ -44,9 +52,33 @@ export class EnglishVocabularyTraining {
     this.currentStep = stepIdx;
   }
 
-  private checkLetter(letter: string): boolean {
+  private isCorrectLetter(letter: string): boolean {
     const { letters, currentLetterIdx } = this.training[this.currentStep];
 
     return letter === letters[currentLetterIdx];
+  }
+
+  private isLastLetter(): boolean {
+    const currentTrainingStep = this.training[this.currentStep];
+
+    return currentTrainingStep.currentLetterIdx === currentTrainingStep.letters.length;
+  }
+
+  private isLastMistake(): boolean {
+    return (
+      this.training[this.currentStep].mistakesCount === EnglishVocabularyTraining.maxMistakesCount
+    );
+  }
+
+  private nextLetter(): void {
+    this.training[this.currentStep].currentLetterIdx += 1;
+  }
+
+  private increaseMistakesCount(): void {
+    this.training[this.currentStep].mistakesCount += 1;
+  }
+
+  private setCurrentQuestionCompleted(): void {
+    this.training[this.currentStep].completed = true;
   }
 }

@@ -9,11 +9,11 @@ const inputHandler = (letter: string): void => {
 };
 
 const goNextPageHandler = (): void => {
-  training.nextStep();
+  training.nextQuestion();
   // updateUI
 };
 
 const goPrevPageHandler = (): void => {
-  training.prevStep();
+  training.prevQuestion();
   // updateUI
 };
