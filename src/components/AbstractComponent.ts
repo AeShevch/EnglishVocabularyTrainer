@@ -21,13 +21,6 @@ export default abstract class AbstractComponent {
 
   public abstract getTemplate(): string;
 
-  private recoveryListeners(): void {
-    Array.from(this.handlersBackUp).forEach((handler) => {
-      this.setHandler(handler);
-      this.handlersBackUp.delete(handler);
-    });
-  }
-
   public getElement(): HTMLElement {
     if (!this.element) {
       this.element = createElement(this.getTemplate());
@@ -63,10 +56,6 @@ export default abstract class AbstractComponent {
     targetElement.addEventListener(type, handler);
   }
 
-  private saveHandler(handler: Handler): void {
-    this.handlersBackUp.add(handler);
-  }
-
   public rerender(): void {
     const oldElement = this.getElement();
 
@@ -75,8 +64,18 @@ export default abstract class AbstractComponent {
     const newElement = this.getElement();
 
     oldElement.replaceWith(newElement);
-    console.log(`rerender`);
 
-    this.recoveryListeners();
+    this.restoreListeners();
+  }
+
+  private saveHandler(handler: Handler): void {
+    this.handlersBackUp.add(handler);
+  }
+
+  private restoreListeners(): void {
+    Array.from(this.handlersBackUp).forEach((handler) => {
+      this.setHandler(handler);
+      this.handlersBackUp.delete(handler);
+    });
   }
 }

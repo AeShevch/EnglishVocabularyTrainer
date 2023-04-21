@@ -37,17 +37,17 @@ const getQuestionHTML = ({ questions, currentQuestionIdx }: EnglishVocabularyTra
           <div id="letters">
             <div class="container px-4">
               <div class="js-answer-buttons row gx-2">
-              ${randomlyShuffledLetters
-                .map(
-                  (letter) =>
-                    `<div class="col">
-                        <button type="button" class="btn btn-primary">
-                           ${letter}
-                        </button>
-                     </div>
-                    `,
-                )
-                .join(``)}
+                ${randomlyShuffledLetters
+                  .map(
+                    (letter) =>
+                      `<div class="col">
+                          <button type="button" class="btn btn-primary">
+                             ${letter}
+                          </button>
+                       </div>
+                      `,
+                  )
+                  .join(``)}
               </div>
           </div>
       </div>

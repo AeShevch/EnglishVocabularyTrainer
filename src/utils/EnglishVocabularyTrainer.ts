@@ -24,17 +24,26 @@ export class EnglishVocabularyTrainer {
     this.inputLetter = this.inputLetter.bind(this);
   }
 
-  public inputLetter(enteredLetter: string): void {
-    console.log(enteredLetter);
+  public inputLetter(enteredLetter: string): {
+    isCorrect: boolean;
+    isCompeted: boolean;
+  } {
+    let isCorrect = false;
+    let isCompeted = false;
+
     if (this.isCorrectLetter(enteredLetter)) {
       this.nextLetter();
+      isCorrect = true;
     } else {
       this.increaseMistakesCount();
     }
 
     if (this.isLastMistake() || this.isLastLetter()) {
       this.setCurrentQuestionCompleted();
+      isCompeted = true;
     }
+
+    return { isCorrect, isCompeted };
   }
 
   public nextQuestion(): void {
