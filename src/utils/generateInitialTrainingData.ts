@@ -1,6 +1,6 @@
-import { TrainingStep } from "../types";
+import { TrainingQuestion } from "../types";
 
-export const generateInitialTrainingData = (trainingWords: string[]): TrainingStep[] =>
+export const generateInitialTrainingData = (trainingWords: string[]): TrainingQuestion[] =>
   trainingWords.map((word) => ({
     letters: word.split(``),
     currentLetterIdx: 0,
