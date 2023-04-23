@@ -7,12 +7,12 @@ type Handler = {
   elementSelector: string;
 };
 
-export default abstract class AbstractComponent {
+export abstract class Component {
   private element: Nullable<HTMLElement>;
 
   private readonly handlersBackUp: Set<Handler>;
 
-  protected constructor() {
+  constructor() {
     this.element = null;
     this.handlersBackUp = new Set();
 
@@ -29,8 +29,8 @@ export default abstract class AbstractComponent {
     return this.element;
   }
 
-  public removeElement(): void {
-    this.element = null;
+  public unmount(): void {
+    this.element?.remove();
   }
 
   /**
@@ -59,7 +59,7 @@ export default abstract class AbstractComponent {
   public rerender(): void {
     const oldElement = this.getElement();
 
-    this.removeElement();
+    this.element = null;
 
     const newElement = this.getElement();
 

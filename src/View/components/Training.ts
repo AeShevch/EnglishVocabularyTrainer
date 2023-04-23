@@ -1,0 +1,81 @@
+import { EnglishVocabularyTrainer } from "../../Model";
+import { getRandomArrayElements } from "../../utils";
+import { Component } from "../Component";
+
+const getTrainingHTML = ({
+  questions,
+  currentQuestionIdx,
+  maxMistakesCount,
+}: EnglishVocabularyTrainer): string => {
+  const currentQuestionNumber = currentQuestionIdx + 1;
+
+  const { letters, currentLetterIdx, mistakesCount, completed } = questions[currentQuestionIdx];
+  const answeredLetters = completed ? letters : letters.slice(0, currentLetterIdx);
+  const notAnsweredLetters = completed ? [] : letters.slice(currentLetterIdx, letters.length);
+  const randomlyShuffledLetters = getRandomArrayElements(
+    notAnsweredLetters,
+    notAnsweredLetters.length,
+  );
+
+  return `
+    <div>
+      <p class="mb-1">
+        Question 
+        <span id="current_question">${currentQuestionNumber}</span> 
+          of 
+        <span id="total_questions">${questions.length}</span>
+      </p>
+      <p class="mb-5">
+        Mistakes 
+        <span>${mistakesCount}</span> 
+          of 
+        <span>${maxMistakesCount}</span>
+      </p>
+      <div class="d-inline-flex flex-column">
+        <div id="answer" class="d-inline-flex justify-content-center bg-light mx-1 mb-3 row gx-2" style="height: 46px; border-radius: 6px">
+         ${answeredLetters
+           .map(
+             (letter) =>
+               `<div class="col-auto">
+                    <div class="btn btn-primary ${
+                      mistakesCount === maxMistakesCount ? `btn-danger` : ``
+                    }">
+                       ${letter}
+                    </div>
+                 </div>
+                `,
+           )
+           .join(``)}
+          </div>
+          <div id="letters">
+            <div class="container px-4">
+              <div class="js-answer-buttons row gx-2">
+                ${randomlyShuffledLetters
+                  .map(
+                    (letter) =>
+                      `<div class="col-auto">
+                          <button type="button" class="btn btn-primary">
+                             ${letter}
+                          </button>
+                       </div>
+                      `,
+                  )
+                  .join(``)}
+              </div>
+          </div>
+      </div>
+    </div>
+`;
+};
+
+export class TrainingComponent extends Component {
+  public trainer: EnglishVocabularyTrainer;
+
+  public getTemplate(): string {
+    return getTrainingHTML(this.trainer);
+  }
+
+  public bindData(data: EnglishVocabularyTrainer): void {
+    this.trainer = data;
+  }
+}

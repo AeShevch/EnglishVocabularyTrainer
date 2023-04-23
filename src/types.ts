@@ -6,3 +6,9 @@ export type TrainingQuestion = {
   mistakesCount: number;
   completed: boolean;
 };
+
+export type Result = {
+  withoutMistakesCount: number;
+  mistakesCount: number;
+  maxMistakes: { word: string; count: number }[];
+};

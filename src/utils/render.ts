@@ -1,4 +1,4 @@
-import AbstractComponent from "../components/AbstractComponent";
+import { Component } from "../View";
 
 const enum RenderPlacement {
   Start = `afterBegin`,
@@ -13,7 +13,7 @@ const enum RenderPlacement {
  */
 export const render = (
   container: Element,
-  component: AbstractComponent,
+  component: Component,
   place: `${RenderPlacement}` = `beforeEnd`,
 ): void => {
   switch (place) {

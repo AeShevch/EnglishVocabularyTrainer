@@ -1,27 +1,33 @@
 import { MAX_MISTAKES_COUNT, TRAINING_LENGTH } from "../const";
 import { TrainingQuestion } from "../types";
-
-import { generateInitialTrainingData } from "./generateInitialTrainingData";
-import { getRandomArrayElements } from "./getRandomArrayElements";
+import { generateInitialTrainingData, getRandomArrayElements } from "../utils";
 
 export class EnglishVocabularyTrainer {
   public questions: TrainingQuestion[];
 
   public currentQuestionIdx: number;
 
-  public static readonly maxMistakesCount: number = MAX_MISTAKES_COUNT;
+  public readonly maxMistakesCount: number = MAX_MISTAKES_COUNT;
 
-  constructor(words: string[], initialData?: TrainingQuestion[]) {
+  private readonly words: string[];
+
+  constructor(words: string[]) {
     if (!words || !words.length) {
       throw new Error(`No words for training given!`);
     }
 
-    const randomTrainingWords = getRandomArrayElements(words, TRAINING_LENGTH);
-
-    this.questions = initialData || generateInitialTrainingData(randomTrainingWords);
+    this.words = words;
     this.currentQuestionIdx = 0;
 
+    this.newTraining();
+
     this.inputLetter = this.inputLetter.bind(this);
+  }
+
+  public newTraining(): void {
+    const randomTrainingWords = getRandomArrayElements(this.words, TRAINING_LENGTH);
+
+    this.questions = generateInitialTrainingData(randomTrainingWords);
   }
 
   public inputLetter(enteredLetter: string): {
@@ -55,7 +61,7 @@ export class EnglishVocabularyTrainer {
   }
 
   private changeQuestion(stepIdx: number): void {
-    if (stepIdx < 0 || stepIdx > this.questions.length) {
+    if (stepIdx < 0 || stepIdx >= this.questions.length) {
       console.warn(`Wrong step index!`);
 
       return;
@@ -77,10 +83,11 @@ export class EnglishVocabularyTrainer {
   }
 
   private isLastMistake(): boolean {
-    return (
-      this.questions[this.currentQuestionIdx].mistakesCount ===
-      EnglishVocabularyTrainer.maxMistakesCount
-    );
+    return this.questions[this.currentQuestionIdx].mistakesCount === this.maxMistakesCount;
+  }
+
+  public isLastQuestion(): boolean {
+    return this.currentQuestionIdx === this.questions.length - 1;
   }
 
   private nextLetter(): void {
