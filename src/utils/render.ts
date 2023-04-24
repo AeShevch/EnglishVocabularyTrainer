@@ -1,4 +1,4 @@
-import { Component } from "../View";
+import { Component } from "../view";
 
 const enum RenderPlacement {
   Start = `afterBegin`,

@@ -1,4 +1,4 @@
-import { EnglishVocabularyTrainer } from "../../Model";
+import { EnglishVocabularyTrainer } from "../../model";
 import { getRandomArrayElements } from "../../utils";
 import { Component } from "../Component";
 

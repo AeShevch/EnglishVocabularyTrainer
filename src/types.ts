@@ -7,7 +7,7 @@ export type TrainingQuestion = {
   completed: boolean;
 };
 
-export type Result = {
+export type TrainingSummary = {
   withoutMistakesCount: number;
   mistakesCount: number;
   maxMistakes: { word: string; count: number }[];

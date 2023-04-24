@@ -23,7 +23,15 @@ export class EnglishVocabularyTrainer {
     this.inputLetter = this.inputLetter.bind(this);
   }
 
-  public newTraining(): void {
+  public newTraining(initialData?: TrainingQuestion[]): void {
+    if (initialData) {
+      this.questions = initialData;
+
+      this.currentQuestionIdx = initialData.findIndex(({ completed }) => !completed);
+
+      return;
+    }
+
     this.currentQuestionIdx = 0;
 
     const randomTrainingWords = getRandomArrayElements(this.words, TRAINING_LENGTH);

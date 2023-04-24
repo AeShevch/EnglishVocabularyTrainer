@@ -1,24 +1,25 @@
-const path = require('path');
+const path = require("path");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 
 const pathToPublic = path.join(__dirname, `public`);
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: "./src/app.ts",
   module: {
     rules: [
       {
         test: /\.ts?$/,
-        use: 'ts-loader',
+        use: "ts-loader",
         exclude: /node_modules/,
       },
-    ]
+    ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: [".tsx", ".ts", ".js"],
   },
   output: {
-    filename: 'bundle.js',
+    filename: "bundle.js",
+    publicPath: "/",
   },
   plugins: [
     new htmlWebpackPlugin({
@@ -28,6 +29,7 @@ module.exports = {
   ],
   devServer: {
     watchFiles: "public/*.html",
-    hot: false
-  }
+    hot: false,
+    historyApiFallback: true,
+  },
 };

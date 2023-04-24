@@ -1,5 +1,5 @@
 import { Nullable } from "../types";
-import { createElement } from "../utils/render";
+import { createElement } from "../utils";
 
 type Handler = {
   type: keyof HTMLElementEventMap;
