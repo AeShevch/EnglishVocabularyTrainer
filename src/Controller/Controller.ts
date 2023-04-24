@@ -31,6 +31,7 @@ export class Controller {
 
     this.startTraining = this.startTraining.bind(this);
     this.startAgain = this.startAgain.bind(this);
+    this.keyPressHandler = this.keyPressHandler.bind(this);
     this.trainingComponent.bindData(this.model);
   }
 
@@ -53,46 +54,17 @@ export class Controller {
       type: `click`,
       handler: (evt) => {
         if (evt.target instanceof HTMLButtonElement) {
-          this.onLetterClick(evt.target);
+          this.letterClickHandler(evt.target);
         }
       },
       elementSelector: `.js-answer-buttons`,
     });
-  }
 
-  private onLetterClick(target: HTMLButtonElement): void {
-    const input = target.textContent;
-
-    if (input) {
-      const { isCorrect, isCompeted } = this.model.inputLetter(input.trim());
-
-      if (!isCorrect) {
-        target.classList.add(`btn-danger`);
-
-        setTimeout(() => {
-          target.classList.remove(`btn-danger`);
-          this.trainingComponent.rerender();
-        }, 200);
-      } else {
-        this.trainingComponent.rerender();
-      }
-
-      if (isCompeted) {
-        setTimeout(() => {
-          if (!this.model.isLastQuestion()) {
-            this.model.nextQuestion();
-            this.trainingComponent.rerender();
-
-            return;
-          }
-
-          this.showResults();
-        }, 1500);
-      }
-    }
+    this.setGlobalHandlers();
   }
 
   private showResults(): void {
+    this.clearGlobalHandlers();
     this.trainingComponent.unmount();
 
     this.resultsComponent.bindData(this.getResults());
@@ -104,6 +76,67 @@ export class Controller {
       handler: this.startAgain,
       elementSelector: `.js-start-again`,
     });
+  }
+
+  private startAgain(): void {
+    this.resultsComponent.unmount();
+    this.model.newTraining();
+
+    render(this.rootNode, this.startScreenComponent);
+
+    this.model.newTraining();
+  }
+
+  private setGlobalHandlers(): void {
+    window.addEventListener(`keypress`, this.keyPressHandler);
+  }
+
+  private clearGlobalHandlers(): void {
+    window.removeEventListener(`keypress`, this.keyPressHandler);
+  }
+
+  private letterClickHandler(target: HTMLButtonElement): void {
+    const input = target.textContent;
+
+    if (input) {
+      this.checkLetter(input.trim(), target);
+    }
+  }
+
+  private keyPressHandler({ key }: KeyboardEvent): void {
+    const targetButton = Array.from(this.rootNode.querySelectorAll(`.js-letter-button`)).find(
+      ({ textContent }) => textContent && textContent.trim() === key,
+    );
+
+    this.checkLetter(key, targetButton);
+  }
+
+  private checkLetter(letter: string, targetButton: Element | undefined): void {
+    const { isCorrect, isCompeted } = this.model.inputLetter(letter);
+
+    if (!isCorrect) {
+      targetButton?.classList.add(`btn-danger`);
+
+      setTimeout(() => {
+        targetButton?.classList.remove(`btn-danger`);
+        this.trainingComponent.rerender();
+      }, 200);
+    } else {
+      this.trainingComponent.rerender();
+    }
+
+    if (isCompeted) {
+      setTimeout(() => {
+        if (!this.model.isLastQuestion()) {
+          this.model.nextQuestion();
+          this.trainingComponent.rerender();
+
+          return;
+        }
+
+        this.showResults();
+      }, 1500);
+    }
   }
 
   private getResults(): Result {
@@ -131,14 +164,5 @@ export class Controller {
       }),
       { withoutMistakesCount: 0, mistakesCount: 0, maxMistakes: [] },
     );
-  }
-
-  private startAgain(): void {
-    this.resultsComponent.unmount();
-    this.model.newTraining();
-
-    render(this.rootNode, this.startScreenComponent);
-
-    this.model.newTraining();
   }
 }

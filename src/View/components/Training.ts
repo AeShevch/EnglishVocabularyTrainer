@@ -54,7 +54,7 @@ const getTrainingHTML = ({
                   .map(
                     (letter) =>
                       `<div class="col-auto">
-                          <button type="button" class="btn btn-primary">
+                          <button type="button" class="js-letter-button btn btn-primary">
                              ${letter}
                           </button>
                        </div>
