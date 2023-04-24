@@ -1,7 +1,7 @@
 import { Component } from "../Component";
 
 const getRequestModalTemplate = (): string =>
-  `<div id="resume-request-modal" class="modal" tabindex="-1">
+  `<div id="resume-request-modal" class="modal fade show" style="display: block;" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">

@@ -64,9 +64,11 @@ export class Controller {
 
     this.router
       .addRoute(`/`, this.renderStartPage)
-      .addRoute(`/training`, this.renderTraining)
+      .addRoute<{ slug: string }>(`/training/:slug`, ({ slug }) => this.renderTraining(slug), true)
       .addRoute(`/results`, this.renderSummaryPage)
       .start();
+
+    this.router.navigateTo(`/`);
   }
 
   private setGlobalHandlers(): void {
@@ -98,13 +100,14 @@ export class Controller {
 
     this.startScreenComponent.setHandler({
       type: `click`,
-      handler: () => this.router.navigateTo(`/training`),
+      handler: () => this.router.navigateTo(`/training/1`),
       elementSelector: `.js-start-training`,
     });
   }
 
-  private renderTraining(): void {
+  private renderTraining(slug: number): void {
     this.startScreenComponent.unmount();
+    this.model.currentQuestionIdx = slug - 1;
 
     render(this.rootNode, this.trainingComponent);
 
@@ -141,7 +144,10 @@ export class Controller {
 
     this.resumeRequestModalComponent.setHandler({
       type: `click`,
-      handler: () => this.model.newTraining(initialData),
+      handler: () => {
+        this.model.newTraining(initialData);
+        this.router.navigateTo(`/training/${this.model.currentQuestionIdx + 1}`);
+      },
       elementSelector: `.js-resume-training`,
     });
   }
@@ -170,6 +176,7 @@ export class Controller {
     this.nextQuestionTimeoutID = window.setTimeout(() => {
       if (!this.model.isLastQuestion()) {
         this.model.nextQuestion();
+        this.router.navigateTo(`/training/${this.model.currentQuestionIdx + 1}`);
         this.trainingComponent.rerender();
 
         this.nextQuestionTimeoutID = null;
@@ -177,7 +184,7 @@ export class Controller {
         return;
       }
 
-      this.router.navigateTo(`results`);
+      this.router.navigateTo(`/results`);
     }, NEXT_QUESTION_DELAY_MS);
   }
 
