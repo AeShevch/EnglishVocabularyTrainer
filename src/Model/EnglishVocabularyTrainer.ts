@@ -17,7 +17,6 @@ export class EnglishVocabularyTrainer {
     }
 
     this.words = words;
-    this.currentQuestionIdx = 0;
 
     this.newTraining();
 
@@ -25,6 +24,8 @@ export class EnglishVocabularyTrainer {
   }
 
   public newTraining(): void {
+    this.currentQuestionIdx = 0;
+
     const randomTrainingWords = getRandomArrayElements(this.words, TRAINING_LENGTH);
 
     this.questions = generateInitialTrainingData(randomTrainingWords);

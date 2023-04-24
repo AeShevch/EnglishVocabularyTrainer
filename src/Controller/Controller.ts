@@ -1,5 +1,5 @@
 import { EnglishVocabularyTrainer } from "../Model";
-import { Result } from "../types";
+import { Nullable, Result } from "../types";
 import { render, isLatinChar, getFirstButtonWithLetter } from "../utils";
 import { ResultsComponent, StartScreenComponent, TrainingComponent } from "../View";
 
@@ -13,6 +13,8 @@ export class Controller {
   private readonly trainingComponent: TrainingComponent;
 
   private readonly resultsComponent: ResultsComponent;
+
+  private nextQuestionTimeoutID: Nullable<number>;
 
   constructor(model: EnglishVocabularyTrainer) {
     this.model = model;
@@ -115,7 +117,7 @@ export class Controller {
     if (!isCorrect) {
       targetButton?.classList.add(`btn-danger`);
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         targetButton?.classList.remove(`btn-danger`);
         this.trainingComponent.rerender();
       }, 200);
@@ -124,10 +126,14 @@ export class Controller {
     }
 
     if (isCompeted) {
-      setTimeout(() => {
+      if (this.nextQuestionTimeoutID) return;
+
+      this.nextQuestionTimeoutID = window.setTimeout(() => {
         if (!this.model.isLastQuestion()) {
           this.model.nextQuestion();
           this.trainingComponent.rerender();
+
+          this.nextQuestionTimeoutID = null;
 
           return;
         }
