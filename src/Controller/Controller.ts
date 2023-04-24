@@ -1,3 +1,4 @@
+import { NEXT_QUESTION_DELAY_MS } from "../const";
 import { EnglishVocabularyTrainer } from "../Model";
 import { Nullable, Result } from "../types";
 import { render, isLatinChar, getFirstButtonWithLetter } from "../utils";
@@ -35,6 +36,30 @@ export class Controller {
     this.startAgain = this.startAgain.bind(this);
     this.keyPressHandler = this.keyPressHandler.bind(this);
     this.trainingComponent.bindData(this.model);
+  }
+
+  private setGlobalHandlers(): void {
+    window.addEventListener(`keypress`, this.keyPressHandler);
+  }
+
+  private clearGlobalHandlers(): void {
+    window.removeEventListener(`keypress`, this.keyPressHandler);
+  }
+
+  private letterClickHandler(target: HTMLButtonElement): void {
+    const input = target.textContent;
+
+    if (input) {
+      this.checkLetter(input.trim(), target);
+    }
+  }
+
+  private keyPressHandler({ key: letter }: KeyboardEvent): void {
+    if (isLatinChar(letter)) {
+      const targetButton = getFirstButtonWithLetter(this.rootNode, letter);
+
+      this.checkLetter(letter, targetButton);
+    }
   }
 
   public run(): void {
@@ -87,59 +112,45 @@ export class Controller {
     this.run();
   }
 
-  private setGlobalHandlers(): void {
-    window.addEventListener(`keypress`, this.keyPressHandler);
-  }
-
-  private clearGlobalHandlers(): void {
-    window.removeEventListener(`keypress`, this.keyPressHandler);
-  }
-
-  private letterClickHandler(target: HTMLButtonElement): void {
-    const input = target.textContent;
-
-    if (input) {
-      this.checkLetter(input.trim(), target);
-    }
-  }
-
-  private keyPressHandler({ key: letter }: KeyboardEvent): void {
-    if (isLatinChar(letter)) {
-      const targetButton = getFirstButtonWithLetter(this.rootNode, letter);
-
-      this.checkLetter(letter, targetButton);
-    }
-  }
-
-  private checkLetter(letter: string, targetButton: Element | undefined): void {
-    const { isCorrect, isCompeted } = this.model.inputLetter(letter);
-
-    if (!isCorrect) {
+  private highlightWrongLetter(targetButton: Element | undefined): void {
+    if (targetButton) {
       targetButton?.classList.add(`btn-danger`);
 
       window.setTimeout(() => {
         targetButton?.classList.remove(`btn-danger`);
         this.trainingComponent.rerender();
       }, 200);
+    }
+  }
+
+  private goToNextQuestionWithDelay(): void {
+    if (this.nextQuestionTimeoutID) return;
+
+    this.nextQuestionTimeoutID = window.setTimeout(() => {
+      if (!this.model.isLastQuestion()) {
+        this.model.nextQuestion();
+        this.trainingComponent.rerender();
+
+        this.nextQuestionTimeoutID = null;
+
+        return;
+      }
+
+      this.showResults();
+    }, NEXT_QUESTION_DELAY_MS);
+  }
+
+  private checkLetter(letter: string, targetButton: Element | undefined): void {
+    const { isCorrect, isCompeted } = this.model.inputLetter(letter);
+
+    if (!isCorrect) {
+      this.highlightWrongLetter(targetButton);
     } else {
       this.trainingComponent.rerender();
     }
 
     if (isCompeted) {
-      if (this.nextQuestionTimeoutID) return;
-
-      this.nextQuestionTimeoutID = window.setTimeout(() => {
-        if (!this.model.isLastQuestion()) {
-          this.model.nextQuestion();
-          this.trainingComponent.rerender();
-
-          this.nextQuestionTimeoutID = null;
-
-          return;
-        }
-
-        this.showResults();
-      }, 1500);
+      this.goToNextQuestionWithDelay();
     }
   }
 
