@@ -21,7 +21,7 @@ const getResultHTML = ({ maxMistakes, mistakesCount, withoutMistakesCount }: Res
             </li>
           </ul>
           
-          <button type="button" class="js-start-again btn btn-primary">Start again</button>
+          <button autofocus type="button" class="js-start-again btn btn-primary">Start again</button>
         </div>
   `;
 };

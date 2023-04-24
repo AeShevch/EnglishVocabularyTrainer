@@ -91,14 +91,22 @@ export class EnglishVocabularyTrainer {
   }
 
   private nextLetter(): void {
+    if (this.isQuestionCompleted()) return;
+
     this.questions[this.currentQuestionIdx].currentLetterIdx += 1;
   }
 
   private increaseMistakesCount(): void {
+    if (this.isQuestionCompleted()) return;
+
     this.questions[this.currentQuestionIdx].mistakesCount += 1;
   }
 
   private setCurrentQuestionCompleted(): void {
     this.questions[this.currentQuestionIdx].completed = true;
+  }
+
+  private isQuestionCompleted(): boolean {
+    return this.questions[this.currentQuestionIdx].completed;
   }
 }

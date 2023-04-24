@@ -1,6 +1,6 @@
 import { EnglishVocabularyTrainer } from "../Model";
 import { Result } from "../types";
-import { render } from "../utils/render";
+import { render, isLatinChar, getFirstButtonWithLetter } from "../utils";
 import { ResultsComponent, StartScreenComponent, TrainingComponent } from "../View";
 
 export class Controller {
@@ -82,9 +82,7 @@ export class Controller {
     this.resultsComponent.unmount();
     this.model.newTraining();
 
-    render(this.rootNode, this.startScreenComponent);
-
-    this.model.newTraining();
+    this.run();
   }
 
   private setGlobalHandlers(): void {
@@ -103,12 +101,12 @@ export class Controller {
     }
   }
 
-  private keyPressHandler({ key }: KeyboardEvent): void {
-    const targetButton = Array.from(this.rootNode.querySelectorAll(`.js-letter-button`)).find(
-      ({ textContent }) => textContent && textContent.trim() === key,
-    );
+  private keyPressHandler({ key: letter }: KeyboardEvent): void {
+    if (isLatinChar(letter)) {
+      const targetButton = getFirstButtonWithLetter(this.rootNode, letter);
 
-    this.checkLetter(key, targetButton);
+      this.checkLetter(letter, targetButton);
+    }
   }
 
   private checkLetter(letter: string, targetButton: Element | undefined): void {

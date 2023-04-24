@@ -31,6 +31,7 @@ export abstract class Component {
 
   public unmount(): void {
     this.element?.remove();
+    this.element = null;
   }
 
   /**
