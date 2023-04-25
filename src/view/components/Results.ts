@@ -36,13 +36,13 @@ const getResultHTML = ({
 };
 
 export class SummaryComponent extends Component {
-  private result: TrainingSummary;
+  private props: TrainingSummary;
 
   getTemplate(): string {
-    return getResultHTML(this.result);
+    return getResultHTML(this.props);
   }
 
-  public bindData(data: TrainingSummary): void {
-    this.result = data;
+  public setProps(props: TrainingSummary): void {
+    this.props = props;
   }
 }

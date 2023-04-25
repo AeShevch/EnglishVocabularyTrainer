@@ -1,28 +1,16 @@
-type RouteCallback<T extends { [key: string]: string } | void> = (
-  params: T extends void ? Record<string, never> : T,
-) => void;
-
-type Route<T extends { [key: string]: string } | void> = {
-  path: string;
-  callback: RouteCallback<T>;
-  isDynamic?: boolean;
-};
+import { Route, RouteCallback, RouteCallbackParams } from "./types";
 
 export class Router {
-  private routes: Route<void>[] = [];
+  private routes: Route<void | RouteCallbackParams>[] = [];
 
-  public addRoute<T extends { [key: string]: string } | void>(
+  public addRoute<T extends RouteCallbackParams | void = void>(
     path: string,
     callback: RouteCallback<T>,
-    isDynamic = false
+    isDynamic = false,
   ): this {
     this.routes.push({ path, callback, isDynamic });
 
     return this;
-  }
-
-  public removeRoute(path: string): void {
-    this.routes = this.routes.filter((route) => route.path !== path);
   }
 
   public navigateTo(path: string): void {
@@ -46,12 +34,12 @@ export class Router {
         const match = currentPath.match(pattern);
 
         if (match) {
-          const params = match.slice(1).reduce(
+          const params = match.slice(1).reduce<RouteCallbackParams>(
             (acc, value, index) => ({
               ...acc,
-              [route.path.split(`:`)[index + 1]]: value
+              [route.path.split(`:`)[index + 1]]: value,
             }),
-            {}
+            {},
           );
 
           route.callback(params);

@@ -69,13 +69,13 @@ const getTrainingHTML = ({
 };
 
 export class TrainingComponent extends Component {
-  public trainer: EnglishVocabularyTrainer;
+  public props: EnglishVocabularyTrainer;
 
   public getTemplate(): string {
-    return getTrainingHTML(this.trainer);
+    return getTrainingHTML(this.props);
   }
 
-  public bindData(data: EnglishVocabularyTrainer): void {
-    this.trainer = data;
+  public setProps(props: EnglishVocabularyTrainer): void {
+    this.props = props;
   }
 }

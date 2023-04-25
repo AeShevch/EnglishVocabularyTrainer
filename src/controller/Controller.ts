@@ -52,7 +52,7 @@ export class Controller {
     this.renderSummaryPage = this.renderSummaryPage.bind(this);
     this.startAgain = this.startAgain.bind(this);
     this.keyPressHandler = this.keyPressHandler.bind(this);
-    this.trainingComponent.bindData(this.model);
+    this.trainingComponent.setProps(this.model);
   }
 
   public run(): void {
@@ -105,9 +105,9 @@ export class Controller {
     });
   }
 
-  private renderTraining(slug: number): void {
+  private renderTraining(slug: string): void {
     this.startScreenComponent.unmount();
-    this.model.currentQuestionIdx = slug - 1;
+    this.model.currentQuestionIdx = +slug - 1;
 
     render(this.rootNode, this.trainingComponent);
 
@@ -125,10 +125,7 @@ export class Controller {
   }
 
   private renderSummaryPage(): void {
-    this.clearGlobalHandlers();
-    this.trainingComponent.unmount();
-
-    this.summaryComponent.bindData(getTrainingSummary(this.model.questions));
+    this.summaryComponent.setProps(getTrainingSummary(this.model.questions));
 
     render(this.rootNode, this.summaryComponent);
 
@@ -147,8 +144,18 @@ export class Controller {
       handler: () => {
         this.model.newTraining(initialData);
         this.router.navigateTo(`/training/${this.model.currentQuestionIdx + 1}`);
+        this.resumeRequestModalComponent.unmount();
       },
       elementSelector: `.js-resume-training`,
+    });
+
+    this.resumeRequestModalComponent.setHandler({
+      type: `click`,
+      handler: () => {
+        this.resumeRequestModalComponent.unmount();
+        storage.clear();
+      },
+      elementSelector: `.js-close-modal`,
     });
   }
 
@@ -166,6 +173,7 @@ export class Controller {
 
       window.setTimeout(() => {
         targetButton?.classList.remove(`btn-danger`);
+        this.trainingComponent.rerender();
       }, 200);
     }
   }
@@ -184,6 +192,8 @@ export class Controller {
         return;
       }
 
+      this.clearGlobalHandlers();
+      this.trainingComponent.unmount();
       this.router.navigateTo(`/results`);
     }, NEXT_QUESTION_DELAY_MS);
   }
@@ -193,9 +203,9 @@ export class Controller {
 
     if (!isCorrect) {
       this.highlightWrongLetter(targetButton);
+    } else {
+      this.trainingComponent.rerender();
     }
-
-    this.trainingComponent.rerender();
 
     if (isCompeted) {
       this.goToNextQuestionWithDelay();
