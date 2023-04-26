@@ -10,3 +10,6 @@ Thumbs.db
 # Additional files
 *.log*
 node_modules/
+
+# Build folder
+dist/
