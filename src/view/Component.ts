@@ -1,7 +1,7 @@
 import { Nullable } from "../types";
 import { createElement } from "../utils";
 
-type Handler = {
+type Listeners = {
   type: keyof HTMLElementEventMap;
   handler: (evt: Event) => void;
   elementSelector: string;
@@ -10,11 +10,11 @@ type Handler = {
 export abstract class Component {
   private element: Nullable<HTMLElement>;
 
-  private readonly handlersBackUp: Set<Handler>;
+  private readonly listeners: Set<Listeners>;
 
   constructor() {
     this.element = null;
-    this.handlersBackUp = new Set();
+    this.listeners = new Set();
 
     this.rerender = this.rerender.bind(this);
   }
@@ -30,6 +30,8 @@ export abstract class Component {
   }
 
   public unmount(): void {
+    this.clearHandlers();
+
     this.element?.remove();
     this.element = null;
   }
@@ -40,7 +42,7 @@ export abstract class Component {
    * @param {callback} handler Callback function
    * @param {string} [elementSelector] Css selector of element. If selector is unspecified the handler will be attached on the parent element
    */
-  public setHandler({ type, handler, elementSelector }: Handler): void {
+  public setHandler({ type, handler, elementSelector }: Listeners): void {
     this.saveHandler({ type, handler, elementSelector });
 
     const parentElement = this.getElement();
@@ -57,6 +59,16 @@ export abstract class Component {
     targetElement.addEventListener(type, handler);
   }
 
+  public clearHandlers(): void {
+    this.listeners.forEach(({ elementSelector, handler, type }) => {
+      document.querySelector(elementSelector)?.removeEventListener(type, handler);
+    });
+  }
+
+  private saveHandler(handler: Listeners): void {
+    this.listeners.add(handler);
+  }
+
   public rerender(): void {
     const oldElement = this.getElement();
 
@@ -69,14 +81,10 @@ export abstract class Component {
     this.restoreListeners();
   }
 
-  private saveHandler(handler: Handler): void {
-    this.handlersBackUp.add(handler);
-  }
-
   private restoreListeners(): void {
-    Array.from(this.handlersBackUp).forEach((handler) => {
+    Array.from(this.listeners).forEach((handler) => {
       this.setHandler(handler);
-      this.handlersBackUp.delete(handler);
+      this.listeners.delete(handler);
     });
   }
 }

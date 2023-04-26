@@ -1,7 +1,11 @@
+import { Nullable } from "../types";
+
 import { Route, RouteCallback, RouteCallbackParams } from "./types";
 
 export class Router {
   private routes: Route<void | RouteCallbackParams>[] = [];
+
+  public onBeforePageChange: Nullable<(currentPath: string) => void> = null;
 
   public addRoute<T extends RouteCallbackParams | void = void>(
     path: string,
@@ -26,6 +30,8 @@ export class Router {
   }
 
   private handleRouteChange(currentPath: string): void {
+    if (this.onBeforePageChange) this.onBeforePageChange(currentPath);
+
     for (let i = 0; i < this.routes.length; i += 1) {
       const route = this.routes[i];
 

@@ -39,6 +39,12 @@ export class Controller {
     this.summaryComponent = new SummaryComponent();
     this.resumeRequestModalComponent = new ResumeRequestModalComponent();
 
+    this.router.onBeforePageChange = () => {
+      this.startScreenComponent.unmount();
+      this.trainingComponent.unmount();
+      this.summaryComponent.unmount();
+    };
+
     const rootNode = document.querySelector(`.js-app-root`);
 
     if (!rootNode) {
@@ -56,6 +62,8 @@ export class Controller {
   }
 
   public run(): void {
+    this.router.navigateTo(`/`);
+
     const initialData = storage.get();
 
     if (initialData) {
@@ -80,7 +88,7 @@ export class Controller {
   }
 
   private letterClickHandler(target: HTMLButtonElement): void {
-    const input = target.textContent;
+    const input = target.outerText;
 
     if (input) {
       this.checkLetter(input.trim(), target);
@@ -100,15 +108,18 @@ export class Controller {
 
     this.startScreenComponent.setHandler({
       type: `click`,
-      handler: () => this.router.navigateTo(`/training/1`),
+      handler: () => {
+        this.startScreenComponent.unmount();
+        this.router.navigateTo(`/training/1`);
+      },
       elementSelector: `.js-start-training`,
     });
   }
 
   private renderTraining(slug: string): void {
-    this.startScreenComponent.unmount();
     this.model.currentQuestionIdx = +slug - 1;
 
+    this.trainingComponent.unmount();
     render(this.rootNode, this.trainingComponent);
 
     this.trainingComponent.setHandler({
@@ -125,6 +136,8 @@ export class Controller {
   }
 
   private renderSummaryPage(): void {
+    storage.clear();
+
     this.summaryComponent.setProps(getTrainingSummary(this.model.questions));
 
     render(this.rootNode, this.summaryComponent);
@@ -142,9 +155,11 @@ export class Controller {
     this.resumeRequestModalComponent.setHandler({
       type: `click`,
       handler: () => {
+        this.startScreenComponent.unmount();
+        this.resumeRequestModalComponent.unmount();
+
         this.model.newTraining(initialData);
         this.router.navigateTo(`/training/${this.model.currentQuestionIdx + 1}`);
-        this.resumeRequestModalComponent.unmount();
       },
       elementSelector: `.js-resume-training`,
     });
@@ -162,7 +177,6 @@ export class Controller {
   private startAgain(): void {
     this.summaryComponent.unmount();
     this.model.newTraining();
-    storage.clear();
 
     this.router.navigateTo(`/`);
   }
@@ -175,6 +189,8 @@ export class Controller {
         targetButton?.classList.remove(`btn-danger`);
         this.trainingComponent.rerender();
       }, 200);
+    } else {
+      this.trainingComponent.rerender();
     }
   }
 
@@ -182,18 +198,17 @@ export class Controller {
     if (this.nextQuestionTimeoutID) return;
 
     this.nextQuestionTimeoutID = window.setTimeout(() => {
+      this.trainingComponent.unmount();
+      this.nextQuestionTimeoutID = null;
+
       if (!this.model.isLastQuestion()) {
         this.model.nextQuestion();
         this.router.navigateTo(`/training/${this.model.currentQuestionIdx + 1}`);
-        this.trainingComponent.rerender();
-
-        this.nextQuestionTimeoutID = null;
 
         return;
       }
 
       this.clearGlobalHandlers();
-      this.trainingComponent.unmount();
       this.router.navigateTo(`/results`);
     }, NEXT_QUESTION_DELAY_MS);
   }
