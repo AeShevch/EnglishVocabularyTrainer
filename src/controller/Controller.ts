@@ -8,7 +8,8 @@ import {
   TrainingComponent,
   ResumeRequestModalComponent,
   ELEMENT_SELECTORS,
-  ERROR_STATE_LETTER_CLASSNAME, render
+  ERROR_STATE_LETTER_CLASSNAME,
+  render,
 } from "view";
 
 import { Nullable } from "../types";
