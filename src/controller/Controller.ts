@@ -1,7 +1,6 @@
 import { EnglishVocabularyTrainer, TrainingQuestion } from "model";
 import { Router } from "router";
 import { StorageService } from "services";
-import { isLatinChar, getFirstButtonWithLetter, getTrainingSummary } from "utils";
 import {
   SummaryComponent,
   StartScreenComponent,
@@ -15,6 +14,7 @@ import {
 import { Nullable } from "../types";
 
 import { ERROR_LETTER_STATE_DURATION_MS, NEXT_QUESTION_DELAY_MS } from "./const";
+import { getFirstButtonWithLetter, getTrainingSummary, isLatinChar } from "./utils";
 
 /**
  * Controller implements the handling of user actions,

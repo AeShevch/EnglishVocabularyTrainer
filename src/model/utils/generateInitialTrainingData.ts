@@ -1,4 +1,4 @@
-import { TrainingQuestion } from "../model/types";
+import { TrainingQuestion } from "../types";
 
 export const generateInitialTrainingData = (trainingWords: string[]): TrainingQuestion[] =>
   trainingWords.map((word) => ({

@@ -1,7 +1,8 @@
-import { generateInitialTrainingData, getRandomArrayElements } from "utils";
+import { getRandomArrayElements } from "utils";
 
 import { MAX_MISTAKES_COUNT, TRAINING_LENGTH } from "./const";
 import { TrainingQuestion } from "./types";
+import { generateInitialTrainingData } from "./utils";
 
 /**
  A class for training English vocabulary.
@@ -69,10 +70,6 @@ export class EnglishVocabularyTrainer {
 
   public nextQuestion(): void {
     this.changeQuestion(this.currentQuestionIdx + 1);
-  }
-
-  public prevQuestion(): void {
-    this.changeQuestion(this.currentQuestionIdx - 1);
   }
 
   private changeQuestion(questionIdx: number): void {
