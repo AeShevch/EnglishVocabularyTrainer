@@ -1,22 +1,28 @@
-import { NEXT_QUESTION_DELAY_MS, STORAGE_LS_KEY } from "../const";
-import { EnglishVocabularyTrainer } from "../model";
-import { Router } from "../router";
-import { StorageService } from "../services";
-import { Nullable, TrainingQuestion } from "../types";
-import { render, isLatinChar, getFirstButtonWithLetter, getTrainingSummary } from "../utils";
+import { EnglishVocabularyTrainer, TrainingQuestion } from "model";
+import { Router } from "router";
+import { StorageService } from "services";
+import { isLatinChar, getFirstButtonWithLetter, getTrainingSummary } from "utils";
 import {
   SummaryComponent,
   StartScreenComponent,
   TrainingComponent,
   ResumeRequestModalComponent,
-} from "../view";
+  ELEMENT_SELECTORS,
+  ERROR_STATE_LETTER_CLASSNAME, render
+} from "view";
 
-const storage = new StorageService(STORAGE_LS_KEY);
+import { Nullable } from "../types";
 
+import { ERROR_LETTER_STATE_DURATION_MS, NEXT_QUESTION_DELAY_MS } from "./const";
+
+/**
+ * Controller implements the handling of user actions,
+ * changing the state of Model and redrawing View.
+ */
 export class Controller {
-  private readonly model: EnglishVocabularyTrainer;
+  private rootNode: Element;
 
-  private readonly rootNode: Element;
+  private readonly model: EnglishVocabularyTrainer;
 
   private readonly startScreenComponent: StartScreenComponent;
 
@@ -28,10 +34,15 @@ export class Controller {
 
   private readonly router: Router;
 
+  private readonly storage: StorageService;
+
   private nextQuestionTimeoutID: Nullable<number>;
 
-  constructor(model: EnglishVocabularyTrainer, router: Router) {
+  constructor(model: EnglishVocabularyTrainer, router: Router, storage: StorageService) {
+    this.setRootNode();
+
     this.model = model;
+    this.storage = storage;
     this.router = router;
 
     this.startScreenComponent = new StartScreenComponent();
@@ -39,52 +50,56 @@ export class Controller {
     this.summaryComponent = new SummaryComponent();
     this.resumeRequestModalComponent = new ResumeRequestModalComponent();
 
-    this.router.onBeforePageChange = () => {
-      this.startScreenComponent.unmount();
-      this.trainingComponent.unmount();
-      this.summaryComponent.unmount();
-    };
-
-    const rootNode = document.querySelector(`.js-app-root`);
-
-    if (!rootNode) {
-      throw new Error(`Root node not found!`);
-    }
-
-    this.rootNode = rootNode;
+    this.trainingComponent.setProps(this.model);
 
     this.renderStartPage = this.renderStartPage.bind(this);
-    this.renderTraining = this.renderTraining.bind(this);
+    this.renderTrainingPage = this.renderTrainingPage.bind(this);
     this.renderSummaryPage = this.renderSummaryPage.bind(this);
     this.startAgain = this.startAgain.bind(this);
     this.keyPressHandler = this.keyPressHandler.bind(this);
-    this.trainingComponent.setProps(this.model);
+    this.resumeTrainingClickHandler = this.resumeTrainingClickHandler.bind(this);
+    this.closeModalClickHandler = this.closeModalClickHandler.bind(this);
+    this.unmountAllPages = this.unmountAllPages.bind(this);
+
+    this.router.onBeforePageChange = this.unmountAllPages;
   }
 
   public run(): void {
-    this.router.navigateTo(`/`);
-
-    const initialData = storage.get();
+    const initialData = this.storage.get();
 
     if (initialData) {
       this.showResumeTrainingModal(initialData);
     }
 
     this.router
-      .addRoute(`/`, this.renderStartPage)
-      .addRoute<{ slug: string }>(`/training/:slug`, ({ slug }) => this.renderTraining(slug), true)
-      .addRoute(`/results`, this.renderSummaryPage)
+      .addRoute("/", this.renderStartPage)
+      .addRoute<{ slug: string }>(
+        "/training/:slug",
+        ({ slug }) => this.renderTrainingPage(slug),
+        true,
+      )
+      .addRoute("/results", this.renderSummaryPage)
       .start();
 
-    this.router.navigateTo(`/`);
+    this.router.navigateTo("/");
+  }
+
+  private setRootNode(): void {
+    const rootNode = document.querySelector(ELEMENT_SELECTORS.ROOT_NODE);
+
+    if (!rootNode) {
+      throw new Error(`Root node (${ELEMENT_SELECTORS.ROOT_NODE}) not found!`);
+    }
+
+    this.rootNode = rootNode;
   }
 
   private setGlobalHandlers(): void {
-    window.addEventListener(`keypress`, this.keyPressHandler);
+    window.addEventListener("keypress", this.keyPressHandler);
   }
 
   private clearGlobalHandlers(): void {
-    window.removeEventListener(`keypress`, this.keyPressHandler);
+    window.removeEventListener("keypress", this.keyPressHandler);
   }
 
   private letterClickHandler(target: HTMLButtonElement): void {
@@ -103,49 +118,57 @@ export class Controller {
     }
   }
 
+  private resumeTrainingClickHandler(initialData: TrainingQuestion[]): void {
+    this.resumeRequestModalComponent.unmount();
+
+    this.model.newTraining(initialData);
+    this.router.navigateTo(`/training/${this.model.currentQuestionIdx + 1}`);
+  }
+
+  private closeModalClickHandler(): void {
+    this.resumeRequestModalComponent.unmount();
+    this.storage.clear();
+  }
+
   public renderStartPage(): void {
     render(this.rootNode, this.startScreenComponent);
 
     this.startScreenComponent.setHandler({
-      type: `click`,
-      handler: () => {
-        this.startScreenComponent.unmount();
-        this.router.navigateTo(`/training/1`);
-      },
-      elementSelector: `.js-start-training`,
+      type: "click",
+      handler: () => this.router.navigateTo("/training/1"),
+      elementSelector: ELEMENT_SELECTORS.START_TRAINING_BUTTON,
     });
   }
 
-  private renderTraining(slug: string): void {
-    this.model.currentQuestionIdx = +slug - 1;
+  private renderTrainingPage(slug: string): void {
+    this.model.currentQuestionIdx = Number(slug) - 1;
 
-    this.trainingComponent.unmount();
     render(this.rootNode, this.trainingComponent);
 
     this.trainingComponent.setHandler({
-      type: `click`,
+      type: "click",
       handler: (evt) => {
         if (evt.target instanceof HTMLButtonElement) {
           this.letterClickHandler(evt.target);
         }
       },
-      elementSelector: `.js-answer-buttons`,
+      elementSelector: ELEMENT_SELECTORS.ANSWER_BUTTONS_WRAP,
     });
 
     this.setGlobalHandlers();
   }
 
   private renderSummaryPage(): void {
-    storage.clear();
+    this.storage.clear();
 
     this.summaryComponent.setProps(getTrainingSummary(this.model.questions));
 
     render(this.rootNode, this.summaryComponent);
 
     this.summaryComponent.setHandler({
-      type: `click`,
+      type: "click",
       handler: this.startAgain,
-      elementSelector: `.js-start-again`,
+      elementSelector: ELEMENT_SELECTORS.START_AGAIN_BUTTON,
     });
   }
 
@@ -153,42 +176,32 @@ export class Controller {
     render(this.rootNode, this.resumeRequestModalComponent);
 
     this.resumeRequestModalComponent.setHandler({
-      type: `click`,
-      handler: () => {
-        this.startScreenComponent.unmount();
-        this.resumeRequestModalComponent.unmount();
-
-        this.model.newTraining(initialData);
-        this.router.navigateTo(`/training/${this.model.currentQuestionIdx + 1}`);
-      },
-      elementSelector: `.js-resume-training`,
+      type: "click",
+      handler: () => this.resumeTrainingClickHandler(initialData),
+      elementSelector: ELEMENT_SELECTORS.RESUME_TRAINING_BUTTON,
     });
 
     this.resumeRequestModalComponent.setHandler({
-      type: `click`,
-      handler: () => {
-        this.resumeRequestModalComponent.unmount();
-        storage.clear();
-      },
-      elementSelector: `.js-close-modal`,
+      type: "click",
+      handler: this.closeModalClickHandler,
+      elementSelector: ELEMENT_SELECTORS.CLOSE_MODAL_BUTTON,
     });
   }
 
   private startAgain(): void {
-    this.summaryComponent.unmount();
     this.model.newTraining();
 
-    this.router.navigateTo(`/`);
+    this.router.navigateTo("/");
   }
 
   private highlightWrongLetter(targetButton: Element | undefined): void {
     if (targetButton) {
-      targetButton?.classList.add(`btn-danger`);
+      targetButton.classList.add(ERROR_STATE_LETTER_CLASSNAME);
 
       window.setTimeout(() => {
-        targetButton?.classList.remove(`btn-danger`);
+        targetButton.classList.remove(ERROR_STATE_LETTER_CLASSNAME);
         this.trainingComponent.rerender();
-      }, 200);
+      }, ERROR_LETTER_STATE_DURATION_MS);
     } else {
       this.trainingComponent.rerender();
     }
@@ -198,7 +211,6 @@ export class Controller {
     if (this.nextQuestionTimeoutID) return;
 
     this.nextQuestionTimeoutID = window.setTimeout(() => {
-      this.trainingComponent.unmount();
       this.nextQuestionTimeoutID = null;
 
       if (!this.model.isLastQuestion()) {
@@ -209,12 +221,12 @@ export class Controller {
       }
 
       this.clearGlobalHandlers();
-      this.router.navigateTo(`/results`);
+      this.router.navigateTo("/results");
     }, NEXT_QUESTION_DELAY_MS);
   }
 
   private checkLetter(letter: string, targetButton: Element | undefined): void {
-    const { isCorrect, isCompeted } = this.model.inputLetter(letter);
+    const { isCorrect, isCompleted } = this.model.inputLetter(letter);
 
     if (!isCorrect) {
       this.highlightWrongLetter(targetButton);
@@ -222,10 +234,16 @@ export class Controller {
       this.trainingComponent.rerender();
     }
 
-    if (isCompeted) {
+    if (isCompleted) {
       this.goToNextQuestionWithDelay();
     }
 
-    storage.set(this.model.questions);
+    this.storage.set(this.model.questions);
+  }
+
+  private unmountAllPages(): void {
+    this.startScreenComponent.unmount();
+    this.trainingComponent.unmount();
+    this.summaryComponent.unmount();
   }
 }

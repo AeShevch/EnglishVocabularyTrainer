@@ -38,14 +38,14 @@ const getTrainingHTML = ({
              (letter) =>
                `<div class="col-auto">
                     <div class="btn btn-primary ${
-                      mistakesCount === maxMistakesCount ? `btn-danger` : ``
+                      mistakesCount === maxMistakesCount ? "btn-danger" : ""
                     }">
                        ${letter}
                     </div>
                  </div>
                 `,
            )
-           .join(``)}
+           .join("")}
           </div>
           <div id="letters">
             <div class="container px-4">
@@ -60,7 +60,7 @@ const getTrainingHTML = ({
                        </div>
                       `,
                   )
-                  .join(``)}
+                  .join("")}
               </div>
           </div>
       </div>
@@ -68,6 +68,9 @@ const getTrainingHTML = ({
 `;
 };
 
+/**
+ * Training question page
+ */
 export class TrainingComponent extends Component {
   public props: EnglishVocabularyTrainer;
 

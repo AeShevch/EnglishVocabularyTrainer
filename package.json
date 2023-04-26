@@ -1,10 +1,10 @@
 {
   "name": "englishvocabularytrainer",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "FundraiseUp frontend test",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --mode=production",
+    "build": "npm run lint && webpack --mode=production",
     "serve": "webpack serve --open --mode=development",
     "lint": "eslint --fix --cache --ext .ts ./src -c .eslintrc"
   },

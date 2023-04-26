@@ -23,5 +23,13 @@
   "include": ["src/**/*.ts"],
   "exclude": [
     "node_modules/**/*"
-  ]
+  ],
+  "paths": {
+    "utils": ["src/utils"],
+    "services": ["src/services"],
+    "view": ["src/view"],
+    "controller": ["src/controller"],
+    "model": ["src/model"],
+    "router": ["src/router"],
+  }
 }

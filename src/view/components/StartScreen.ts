@@ -8,6 +8,9 @@ const getStartScreenHtml = (): string =>
    </div>
 `;
 
+/**
+ * Start page with training start button
+ */
 export class StartScreenComponent extends Component {
   public getTemplate(): string {
     return getStartScreenHtml();

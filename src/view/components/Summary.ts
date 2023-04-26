@@ -1,4 +1,5 @@
-import { TrainingSummary } from "../../types";
+import { TrainingSummary } from "model";
+
 import { Component } from "../Component";
 
 const getResultHTML = ({
@@ -6,7 +7,7 @@ const getResultHTML = ({
   mistakesCount,
   withoutMistakesCount,
 }: TrainingSummary): string => {
-  const maxMistakesWords = maxMistakes.map(({ word }) => word).join(`, `);
+  const maxMistakesWords = maxMistakes.map(({ word }) => word).join(", ");
 
   return `
         <div>
@@ -28,13 +29,16 @@ const getResultHTML = ({
                 </li>
               `
             }
-  </ul>
-
-  <button autofocus type="button" class="js-start-again btn btn-primary">Start again</button>
-  </div>
+          </ul>
+        
+          <button autofocus type="button" class="js-start-again btn btn-primary">Start again</button>
+        </div>
   `;
 };
 
+/**
+ * Outputs the results of the training session
+ */
 export class SummaryComponent extends Component {
   private props: TrainingSummary;
 

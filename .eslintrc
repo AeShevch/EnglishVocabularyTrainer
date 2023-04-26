@@ -40,7 +40,7 @@
     ],
     "quotes": [
       "error",
-      "backtick"
+      "double"
     ],
     "camelcase": "off",
     "consistent-return": "off",

@@ -1,7 +1,13 @@
-import { MAX_MISTAKES_COUNT, TRAINING_LENGTH } from "../const";
-import { TrainingQuestion } from "../types";
-import { generateInitialTrainingData, getRandomArrayElements } from "../utils";
+import { generateInitialTrainingData, getRandomArrayElements } from "utils";
 
+import { MAX_MISTAKES_COUNT, TRAINING_LENGTH } from "./const";
+import { TrainingQuestion } from "./types";
+
+/**
+ A class for training English vocabulary.
+ It generates a random set of words
+ and provides an interface for training on those words
+ */
 export class EnglishVocabularyTrainer {
   public questions: TrainingQuestion[];
 
@@ -13,7 +19,7 @@ export class EnglishVocabularyTrainer {
 
   constructor(words: string[]) {
     if (!words || !words.length) {
-      throw new Error(`No words for training given!`);
+      throw new Error("No words for training given!");
     }
 
     this.words = words;
@@ -41,10 +47,10 @@ export class EnglishVocabularyTrainer {
 
   public inputLetter(enteredLetter: string): {
     isCorrect: boolean;
-    isCompeted: boolean;
+    isCompleted: boolean;
   } {
     let isCorrect = false;
-    let isCompeted = false;
+    let isCompleted = false;
 
     if (this.isCorrectLetter(enteredLetter)) {
       this.nextLetter();
@@ -55,10 +61,10 @@ export class EnglishVocabularyTrainer {
 
     if (this.isLastMistake() || this.isLastLetter()) {
       this.setCurrentQuestionCompleted();
-      isCompeted = true;
+      isCompleted = true;
     }
 
-    return { isCorrect, isCompeted };
+    return { isCorrect, isCompleted };
   }
 
   public nextQuestion(): void {
@@ -69,14 +75,14 @@ export class EnglishVocabularyTrainer {
     this.changeQuestion(this.currentQuestionIdx - 1);
   }
 
-  private changeQuestion(stepIdx: number): void {
-    if (stepIdx < 0 || stepIdx >= this.questions.length) {
-      console.warn(`Wrong step index!`);
+  private changeQuestion(questionIdx: number): void {
+    if (questionIdx < 0 || questionIdx >= this.questions.length) {
+      console.warn("Wrong step index!");
 
       return;
     }
 
-    this.currentQuestionIdx = stepIdx;
+    this.currentQuestionIdx = questionIdx;
   }
 
   private isCorrectLetter(letter: string): boolean {

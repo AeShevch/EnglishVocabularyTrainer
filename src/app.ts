@@ -1,10 +1,14 @@
-import { Controller } from "./controller";
-import { EnglishVocabularyTrainer, ALL_TRAINING_WORDS } from "./model";
-import { Router } from "./router";
+import { Controller } from "controller";
+import { EnglishVocabularyTrainer, ALL_TRAINING_WORDS } from "model";
+import { Router } from "router";
+import { StorageService } from "services";
 
-const model = new EnglishVocabularyTrainer(ALL_TRAINING_WORDS);
-const router = new Router();
+import { STORAGE_LS_KEY } from "./const";
 
-const app = new Controller(model, router);
+const app = new Controller(
+  new EnglishVocabularyTrainer(ALL_TRAINING_WORDS),
+  new Router(),
+  new StorageService(STORAGE_LS_KEY),
+);
 
 app.run();

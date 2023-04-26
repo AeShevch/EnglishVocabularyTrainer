@@ -2,6 +2,10 @@ import { Nullable } from "../types";
 
 import { Route, RouteCallback, RouteCallbackParams } from "./types";
 
+/**
+ * A lightweight router that allows to register
+ * and handle routes for single-page applications.
+ */
 export class Router {
   private routes: Route<void | RouteCallbackParams>[] = [];
 
@@ -18,14 +22,13 @@ export class Router {
   }
 
   public navigateTo(path: string): void {
-    window.history.pushState(null, ``, path);
-    const currentPath = window.location.pathname;
+    window.history.pushState(null, "", path);
 
-    this.handleRouteChange(currentPath);
+    this.handleRouteChange(window.location.pathname);
   }
 
   public start(): void {
-    window.addEventListener(`popstate`, () => this.handleRouteChange(window.location.pathname));
+    window.addEventListener("popstate", () => this.handleRouteChange(window.location.pathname));
     this.handleRouteChange(window.location.pathname);
   }
 
@@ -36,14 +39,14 @@ export class Router {
       const route = this.routes[i];
 
       if (route.isDynamic) {
-        const pattern = new RegExp(`^${route.path.replace(/:\w+/g, `([\\w-]+)`)}$`);
+        const pattern = new RegExp(`^${route.path.replace(/:\w+/g, "([\\w-]+)")}$`);
         const match = currentPath.match(pattern);
 
         if (match) {
           const params = match.slice(1).reduce<RouteCallbackParams>(
             (acc, value, index) => ({
               ...acc,
-              [route.path.split(`:`)[index + 1]]: value,
+              [route.path.split(":")[index + 1]]: value,
             }),
             {},
           );

@@ -1,5 +1,11 @@
-import { Nullable, TrainingQuestion } from "../types";
+import { TrainingQuestion } from "model";
 
+import { Nullable } from "../types";
+
+/**
+ * The storage service for managing a collection of training questions
+ * stored in a `Storage` object (by default, `window.localStorage`).
+ */
 export class StorageService {
   private readonly storage: Storage;
 

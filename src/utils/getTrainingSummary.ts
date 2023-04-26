@@ -1,4 +1,4 @@
-import { TrainingSummary, TrainingQuestion } from "../types";
+import { TrainingQuestion, TrainingSummary } from "model";
 
 export const getTrainingSummary = (questions: TrainingQuestion[]): TrainingSummary => {
   const maxNumberOfMistakes = questions.reduce(
@@ -17,7 +17,7 @@ export const getTrainingSummary = (questions: TrainingQuestion[]): TrainingSumma
           ? [
               ...result.maxMistakes,
               {
-                word: question.letters.join(``),
+                word: question.letters.join(""),
                 count: maxNumberOfMistakes,
               },
             ]

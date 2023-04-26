@@ -1,5 +1,6 @@
 import { Nullable } from "../types";
-import { createElement } from "../utils";
+
+import { createElement } from "./utils/createElement";
 
 type Listeners = {
   type: keyof HTMLElementEventMap;
@@ -7,6 +8,9 @@ type Listeners = {
   elementSelector: string;
 };
 
+/**
+ * Base abstract class for creating reusable components
+ */
 export abstract class Component {
   private element: Nullable<HTMLElement>;
 
@@ -36,12 +40,6 @@ export abstract class Component {
     this.element = null;
   }
 
-  /**
-   * Sets handler on components element
-   * @param {string} type handler type
-   * @param {callback} handler Callback function
-   * @param {string} [elementSelector] Css selector of element. If selector is unspecified the handler will be attached on the parent element
-   */
   public setHandler({ type, handler, elementSelector }: Listeners): void {
     this.saveHandler({ type, handler, elementSelector });
 
