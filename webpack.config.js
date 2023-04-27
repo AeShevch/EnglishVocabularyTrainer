@@ -36,11 +36,12 @@ module.exports = {
       template: path.resolve(__dirname, "public", "index.html"),
     }),
     // HACK: Swapping 404 page for GitHub Pages to enable routing via History API
-    process.env.DEPLOY &&
-      new htmlWebpackPlugin({
-        filename: "404.html",
-        template: path.resolve(__dirname, "public", "index.html"),
-      }),
+    ...(process.env.DEPLOY
+      ? new htmlWebpackPlugin({
+          filename: "404.html",
+          template: path.resolve(__dirname, "public", "index.html"),
+        })
+      : []),
   ],
   devServer: {
     watchFiles: "public/*.html",
