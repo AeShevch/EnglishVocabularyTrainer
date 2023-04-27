@@ -1,2 +1,0 @@
-export const NEXT_QUESTION_DELAY_MS = 1500;
-export const ERROR_LETTER_STATE_DURATION_MS = 200;
