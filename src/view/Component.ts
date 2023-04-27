@@ -61,6 +61,8 @@ export abstract class Component {
     this.listeners.forEach(({ elementSelector, handler, type }) => {
       document.querySelector(elementSelector)?.removeEventListener(type, handler);
     });
+
+    this.listeners.clear();
   }
 
   private saveHandler(handler: Listeners): void {
@@ -82,7 +84,6 @@ export abstract class Component {
   private restoreListeners(): void {
     Array.from(this.listeners).forEach((handler) => {
       this.setHandler(handler);
-      this.listeners.delete(handler);
     });
   }
 }
