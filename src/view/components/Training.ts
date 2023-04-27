@@ -34,7 +34,7 @@ const getTrainingHTML = ({
              (letter) =>
                `<div class="col-auto">
                     <div class="btn btn-primary ${
-                      mistakesCount === maxMistakesCount ? "btn-danger" : ""
+                      mistakesCount === maxMistakesCount ? "btn-danger" : "btn-success"
                     }">
                        ${letter}
                     </div>
