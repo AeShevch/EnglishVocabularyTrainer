@@ -1,4 +1,5 @@
 import { getRandomLetters } from "view/utils/getRandomLetters";
+
 import { TrainingQuestion } from "../types";
 
 export const generateInitialTrainingData = (trainingWords: string[]): TrainingQuestion[] =>

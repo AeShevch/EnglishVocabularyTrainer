@@ -1,6 +1,7 @@
 import { EnglishVocabularyTrainer, TrainingQuestion } from "model";
 import { Router } from "router";
 import { StorageService } from "services";
+import { Nullable } from "types";
 import {
   SummaryComponent,
   StartScreenComponent,
@@ -10,8 +11,6 @@ import {
   ERROR_STATE_LETTER_CLASSNAME,
   render,
 } from "view";
-
-import { Nullable } from "../types";
 
 import { ERROR_LETTER_STATE_DURATION_MS, NEXT_QUESTION_DELAY_MS } from "./const";
 import { getFirstButtonWithLetter, getTrainingSummary, isLatinChar } from "./utils";
