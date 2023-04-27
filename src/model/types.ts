@@ -1,5 +1,6 @@
 export type TrainingQuestion = {
   letters: string[];
+  taskLetters: string[];
   currentLetterIdx: number;
   mistakesCount: number;
   completed: boolean;

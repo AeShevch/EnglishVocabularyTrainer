@@ -46,7 +46,10 @@ export class EnglishVocabularyTrainer {
     this.questions = generateInitialTrainingData(randomTrainingWords);
   }
 
-  public inputLetter(enteredLetter: string): {
+  public inputLetter(
+    enteredLetter: string,
+    letterIdx?: number,
+  ): {
     isCorrect: boolean;
     isCompleted: boolean;
   } {
@@ -54,7 +57,7 @@ export class EnglishVocabularyTrainer {
     let isCompleted = false;
 
     if (this.isCorrectLetter(enteredLetter)) {
-      this.nextLetter();
+      this.nextLetter(letterIdx);
       isCorrect = true;
     } else {
       this.increaseMistakesCount();
@@ -102,10 +105,18 @@ export class EnglishVocabularyTrainer {
     return this.currentQuestionIdx === this.questions.length - 1;
   }
 
-  private nextLetter(): void {
+  private nextLetter(prevLetterIdx?: number): void {
     if (this.isQuestionCompleted()) return;
 
-    this.questions[this.currentQuestionIdx].currentLetterIdx += 1;
+    const question = this.questions[this.currentQuestionIdx];
+
+    question.currentLetterIdx += 1;
+
+    const firstSameLetterIdx = question.letters[question.currentLetterIdx];
+
+    question.taskLetters = question.taskLetters.filter(
+      (_, idx) => idx !== (prevLetterIdx ?? firstSameLetterIdx),
+    );
   }
 
   private increaseMistakesCount(): void {
@@ -116,6 +127,7 @@ export class EnglishVocabularyTrainer {
 
   private setCurrentQuestionCompleted(): void {
     this.questions[this.currentQuestionIdx].completed = true;
+    this.questions[this.currentQuestionIdx].taskLetters = [];
   }
 
   private isQuestionCompleted(): boolean {

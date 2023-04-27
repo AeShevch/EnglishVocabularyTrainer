@@ -1,7 +1,6 @@
 import { EnglishVocabularyTrainer } from "model";
 
 import { Component } from "../Component";
-import { getRandomLetters } from "../utils/getRandomLetters";
 
 const getTrainingHTML = ({
   questions,
@@ -10,10 +9,9 @@ const getTrainingHTML = ({
 }: EnglishVocabularyTrainer): string => {
   const currentQuestionNumber = currentQuestionIdx + 1;
 
-  const { letters, currentLetterIdx, mistakesCount, completed } = questions[currentQuestionIdx];
+  const { letters, taskLetters, currentLetterIdx, mistakesCount, completed } =
+    questions[currentQuestionIdx];
   const answeredLetters = completed ? letters : letters.slice(0, currentLetterIdx);
-  const notAnsweredLetters = completed ? [] : letters.slice(currentLetterIdx, letters.length);
-  const randomlyShuffledLetters = getRandomLetters(notAnsweredLetters);
 
   return `
     <div>
@@ -48,11 +46,11 @@ const getTrainingHTML = ({
           <div id="letters">
             <div class="container px-4">
               <div class="js-answer-buttons row gx-2">
-                ${randomlyShuffledLetters
+                ${taskLetters
                   .map(
-                    (letter) =>
+                    (letter, index) =>
                       `<div class="col-auto">
-                          <button type="button" class="js-letter-button btn btn-primary">
+                          <button data-index="${index}" type="button" class="js-letter-button btn btn-primary">
                              ${letter}
                           </button>
                        </div>

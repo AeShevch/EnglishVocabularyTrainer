@@ -229,8 +229,11 @@ export class Controller {
     }, NEXT_QUESTION_DELAY_MS);
   }
 
-  private checkLetter(letter: string, targetButton: Element | undefined): void {
-    const { isCorrect, isCompleted } = this.model.inputLetter(letter);
+  private checkLetter(letter: string, targetButton: HTMLButtonElement | undefined): void {
+    const { isCorrect, isCompleted } = this.model.inputLetter(
+      letter,
+      targetButton ? Number(targetButton.dataset.index) : undefined,
+    );
 
     if (!isCorrect) {
       this.highlightWrongLetter(targetButton);
