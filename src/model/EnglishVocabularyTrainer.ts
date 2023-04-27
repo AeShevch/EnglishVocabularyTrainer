@@ -5,7 +5,7 @@ import { TrainingQuestion } from "./types";
 import { generateInitialTrainingData } from "./utils";
 
 /**
- A class for training English vocabulary.
+ The model class for training English vocabulary.
  It generates a random set of words
  and provides an interface for training on those words
  */
