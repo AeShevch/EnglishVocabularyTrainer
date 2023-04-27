@@ -136,7 +136,10 @@ export class Controller {
 
     this.startScreenComponent.setHandler({
       type: "click",
-      handler: () => this.router.navigateTo("/training/1"),
+      handler: () => {
+        this.model.newTraining();
+        this.router.navigateTo("/training/1");
+      },
       elementSelector: ELEMENT_SELECTORS.START_TRAINING_BUTTON,
     });
   }
@@ -168,7 +171,7 @@ export class Controller {
 
     this.summaryComponent.setHandler({
       type: "click",
-      handler: this.startAgain,
+      handler: () => this.router.navigateTo("/"),
       elementSelector: ELEMENT_SELECTORS.START_AGAIN_BUTTON,
     });
   }
