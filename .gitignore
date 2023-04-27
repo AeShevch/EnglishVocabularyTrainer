@@ -10,3 +10,4 @@ Thumbs.db
 # Additional files
 *.log*
 node_modules/
+.eslintcache

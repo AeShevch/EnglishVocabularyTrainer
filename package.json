@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run lint && webpack --mode=production",
-    "serve": "webpack serve --open --mode=development",
-    "start": "npm run build && npm run serve",
+    "dev": "webpack serve --open --mode=development",
+    "start": "webpack serve --open --mode=production",
     "lint": "eslint --fix --cache --ext .ts ./src -c .eslintrc"
   },
   "author": "AeShevch",
@@ -24,5 +24,10 @@
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.13.3",
     "html-webpack-plugin": "^5.5.1"
-  }
+  },
+  "browserslist": [
+    "last 2 years",
+    "> 1%",
+    "not dead"
+  ]
 }
