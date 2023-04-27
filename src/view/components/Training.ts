@@ -1,6 +1,7 @@
-import { EnglishVocabularyTrainer } from "../../model";
-import { getRandomArrayElements } from "../../utils";
+import { EnglishVocabularyTrainer } from "model";
+
 import { Component } from "../Component";
+import { getRandomLetters } from "../utils/getRandomLetters";
 
 const getTrainingHTML = ({
   questions,
@@ -12,10 +13,7 @@ const getTrainingHTML = ({
   const { letters, currentLetterIdx, mistakesCount, completed } = questions[currentQuestionIdx];
   const answeredLetters = completed ? letters : letters.slice(0, currentLetterIdx);
   const notAnsweredLetters = completed ? [] : letters.slice(currentLetterIdx, letters.length);
-  const randomlyShuffledLetters = getRandomArrayElements(
-    notAnsweredLetters,
-    notAnsweredLetters.length,
-  );
+  const randomlyShuffledLetters = getRandomLetters(notAnsweredLetters);
 
   return `
     <div>
