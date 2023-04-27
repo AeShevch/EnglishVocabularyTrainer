@@ -1,8 +1,6 @@
 const path = require("path");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 
-const pathToPublic = path.join(__dirname, `public`);
-
 module.exports = {
   entry: "./src/app.ts",
   module: {
@@ -29,11 +27,16 @@ module.exports = {
   },
   output: {
     filename: "bundle.js",
-    publicPath: "/",
+    publicPath: process.env.NODE_ENV === "production" ? "/EnglishVocabularyTrainer" : "/",
   },
   plugins: [
     new htmlWebpackPlugin({
       filename: "index.html",
+      template: path.resolve(__dirname, "public", "index.html"),
+    }),
+    // HACK: Swapping 404 page for GitHub Pages to enable routing via History API
+    new htmlWebpackPlugin({
+      filename: "404.html",
       template: path.resolve(__dirname, "public", "index.html"),
     }),
   ],
