@@ -7,6 +7,7 @@
     "build": "npm run lint && webpack --mode=production",
     "dev": "webpack serve --open --mode=development",
     "start": "webpack serve --open --mode=production",
+    "deploy": "cross-env DEPLOY=true webpack --mode=production && git subtree push --prefix dist origin gh-pages",
     "lint": "eslint --fix --cache --ext .ts ./src -c .eslintrc"
   },
   "author": "AeShevch",
@@ -20,6 +21,7 @@
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "babel-loader": "^9.1.2",
+    "cross-env": "^7.0.3",
     "eslint": "^8.38.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.8.0",

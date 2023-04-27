@@ -27,7 +27,8 @@ module.exports = {
   },
   output: {
     filename: "bundle.js",
-    publicPath: process.env.NODE_ENV === "production" ? "/EnglishVocabularyTrainer" : "/",
+    // Public path for the GitHub Pages
+    publicPath: process.env.DEPLOY ? "/EnglishVocabularyTrainer" : "/",
   },
   plugins: [
     new htmlWebpackPlugin({
@@ -35,10 +36,11 @@ module.exports = {
       template: path.resolve(__dirname, "public", "index.html"),
     }),
     // HACK: Swapping 404 page for GitHub Pages to enable routing via History API
-    new htmlWebpackPlugin({
-      filename: "404.html",
-      template: path.resolve(__dirname, "public", "index.html"),
-    }),
+    process.env.DEPLOY &&
+      new htmlWebpackPlugin({
+        filename: "404.html",
+        template: path.resolve(__dirname, "public", "index.html"),
+      }),
   ],
   devServer: {
     watchFiles: "public/*.html",
