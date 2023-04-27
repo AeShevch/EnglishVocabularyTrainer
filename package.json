@@ -6,6 +6,7 @@
   "scripts": {
     "build": "npm run lint && webpack --mode=production",
     "serve": "webpack serve --open --mode=development",
+    "start": "npm run build && npm run serve",
     "lint": "eslint --fix --cache --ext .ts ./src -c .eslintrc"
   },
   "author": "AeShevch",
