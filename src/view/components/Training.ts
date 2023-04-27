@@ -11,7 +11,9 @@ const getTrainingHTML = ({
 
   const { letters, taskLetters, currentLetterIdx, mistakesCount, completed } =
     questions[currentQuestionIdx];
-  const answeredLetters = completed ? letters : letters.slice(0, currentLetterIdx);
+  const answeredLetters = completed
+    ? letters
+    : letters.slice(0, currentLetterIdx);
 
   return `
     <div>
@@ -34,12 +36,14 @@ const getTrainingHTML = ({
              (letter) =>
                `<div class="col-auto">
                     <div class="btn btn-primary ${
-                      mistakesCount === maxMistakesCount ? "btn-danger" : "btn-success"
+                      mistakesCount === maxMistakesCount
+                        ? "btn-danger"
+                        : "btn-success"
                     }">
                        ${letter}
                     </div>
                  </div>
-                `,
+                `
            )
            .join("")}
           </div>
@@ -54,7 +58,7 @@ const getTrainingHTML = ({
                              ${letter}
                           </button>
                        </div>
-                      `,
+                      `
                   )
                   .join("")}
               </div>

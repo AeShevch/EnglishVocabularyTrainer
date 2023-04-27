@@ -1,9 +1,11 @@
 import { TrainingQuestion, TrainingSummary } from "model";
 
-export const getTrainingSummary = (questions: TrainingQuestion[]): TrainingSummary => {
+export const getTrainingSummary = (
+  questions: TrainingQuestion[]
+): TrainingSummary => {
   const maxNumberOfMistakes = questions.reduce(
     (prev, { mistakesCount }) => (prev > mistakesCount ? prev : mistakesCount),
-    0,
+    0
   );
 
   return questions.reduce<TrainingSummary>(
@@ -13,7 +15,8 @@ export const getTrainingSummary = (questions: TrainingQuestion[]): TrainingSumma
         : result.withoutMistakesCount,
       mistakesCount: result.mistakesCount + question.mistakesCount,
       maxMistakes:
-        question.mistakesCount === maxNumberOfMistakes && maxNumberOfMistakes !== 0
+        question.mistakesCount === maxNumberOfMistakes &&
+        maxNumberOfMistakes !== 0
           ? [
               ...result.maxMistakes,
               {
@@ -23,6 +26,6 @@ export const getTrainingSummary = (questions: TrainingQuestion[]): TrainingSumma
             ]
           : result.maxMistakes,
     }),
-    { withoutMistakesCount: 0, mistakesCount: 0, maxMistakes: [] },
+    { withoutMistakesCount: 0, mistakesCount: 0, maxMistakes: [] }
   );
 };

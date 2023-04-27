@@ -14,7 +14,7 @@ export class Router {
   public addRoute<T extends RouteCallbackParams | void = void>(
     path: string,
     callback: RouteCallback<T>,
-    isDynamic = false,
+    isDynamic = false
   ): this {
     this.routes.push({ path, callback, isDynamic });
 
@@ -28,7 +28,9 @@ export class Router {
   }
 
   public start(): void {
-    window.addEventListener("popstate", () => this.handleRouteChange(window.location.pathname));
+    window.addEventListener("popstate", () =>
+      this.handleRouteChange(window.location.pathname)
+    );
     this.handleRouteChange(window.location.pathname);
   }
 
@@ -39,7 +41,9 @@ export class Router {
       const route = this.routes[i];
 
       if (route.isDynamic) {
-        const pattern = new RegExp(`^${route.path.replace(/:\w+/g, "([\\w-]+)")}$`);
+        const pattern = new RegExp(
+          `^${route.path.replace(/:\w+/g, "([\\w-]+)")}$`
+        );
         const match = currentPath.match(pattern);
 
         if (match) {
@@ -48,7 +52,7 @@ export class Router {
               ...acc,
               [route.path.split(":")[index + 1]]: value,
             }),
-            {},
+            {}
           );
 
           route.callback(params);

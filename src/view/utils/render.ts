@@ -6,7 +6,7 @@ import { Component } from "../Component";
 export const render = (
   container: Element,
   component: Component,
-  place: "afterBegin" | "beforeEnd" = "beforeEnd",
+  place: "afterBegin" | "beforeEnd" = "beforeEnd"
 ): void => {
   switch (place) {
     case "afterBegin":

@@ -59,7 +59,9 @@ export abstract class Component {
 
   public clearHandlers(): void {
     this.listeners.forEach(({ elementSelector, handler, type }) => {
-      document.querySelector(elementSelector)?.removeEventListener(type, handler);
+      document
+        .querySelector(elementSelector)
+        ?.removeEventListener(type, handler);
     });
 
     this.listeners.clear();

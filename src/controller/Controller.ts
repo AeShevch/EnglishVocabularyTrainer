@@ -12,8 +12,15 @@ import {
   render,
 } from "view";
 
-import { ERROR_LETTER_STATE_DURATION_MS, NEXT_QUESTION_DELAY_MS } from "./const";
-import { getFirstButtonWithLetter, getTrainingSummary, isLatinChar } from "./utils";
+import {
+  ERROR_LETTER_STATE_DURATION_MS,
+  NEXT_QUESTION_DELAY_MS,
+} from "./const";
+import {
+  getFirstButtonWithLetter,
+  getTrainingSummary,
+  isLatinChar,
+} from "./utils";
 
 /**
  * Controller implements the handling of user actions,
@@ -38,7 +45,11 @@ export class Controller {
 
   private nextQuestionTimeoutID: Nullable<number>;
 
-  constructor(model: EnglishVocabularyTrainer, router: Router, storage: StorageService) {
+  constructor(
+    model: EnglishVocabularyTrainer,
+    router: Router,
+    storage: StorageService
+  ) {
     this.setRootNode();
 
     this.model = model;
@@ -57,7 +68,8 @@ export class Controller {
     this.renderSummaryPage = this.renderSummaryPage.bind(this);
     this.startAgain = this.startAgain.bind(this);
     this.keyPressHandler = this.keyPressHandler.bind(this);
-    this.resumeTrainingClickHandler = this.resumeTrainingClickHandler.bind(this);
+    this.resumeTrainingClickHandler =
+      this.resumeTrainingClickHandler.bind(this);
     this.closeModalClickHandler = this.closeModalClickHandler.bind(this);
     this.unmountAllPages = this.unmountAllPages.bind(this);
 
@@ -76,7 +88,7 @@ export class Controller {
       .addRoute<{ slug: string }>(
         "/training/:slug",
         ({ slug }) => this.renderTrainingPage(slug),
-        true,
+        true
       )
       .addRoute("/results", this.renderSummaryPage)
       .start();
@@ -218,7 +230,9 @@ export class Controller {
 
       if (!this.model.isLastQuestion()) {
         this.model.nextQuestion();
-        this.router.navigateTo(`/training/${this.model.currentQuestionIdx + 1}`);
+        this.router.navigateTo(
+          `/training/${this.model.currentQuestionIdx + 1}`
+        );
 
         return;
       }
@@ -228,10 +242,13 @@ export class Controller {
     }, NEXT_QUESTION_DELAY_MS);
   }
 
-  private checkLetter(letter: string, targetButton: HTMLButtonElement | undefined): void {
+  private checkLetter(
+    letter: string,
+    targetButton: HTMLButtonElement | undefined
+  ): void {
     const { isCorrect, isCompleted } = this.model.inputLetter(
       letter,
-      targetButton ? Number(targetButton.dataset.index) : undefined,
+      targetButton ? Number(targetButton.dataset.index) : undefined
     );
 
     if (!isCorrect) {

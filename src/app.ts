@@ -8,7 +8,7 @@ import { STORAGE_LS_KEY } from "./const";
 const app = new Controller(
   new EnglishVocabularyTrainer(ALL_TRAINING_WORDS),
   new Router(),
-  new StorageService(STORAGE_LS_KEY),
+  new StorageService(STORAGE_LS_KEY)
 );
 
 app.run();

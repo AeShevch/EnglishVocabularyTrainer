@@ -34,21 +34,26 @@ export class EnglishVocabularyTrainer {
     if (initialData) {
       this.questions = initialData;
 
-      this.currentQuestionIdx = initialData.findIndex(({ completed }) => !completed);
+      this.currentQuestionIdx = initialData.findIndex(
+        ({ completed }) => !completed
+      );
 
       return;
     }
 
     this.currentQuestionIdx = 0;
 
-    const randomTrainingWords = getRandomArrayElements(this.words, TRAINING_LENGTH);
+    const randomTrainingWords = getRandomArrayElements(
+      this.words,
+      TRAINING_LENGTH
+    );
 
     this.questions = generateInitialTrainingData(randomTrainingWords);
   }
 
   public inputLetter(
     enteredLetter: string,
-    letterIdx?: number,
+    letterIdx?: number
   ): {
     isCorrect: boolean;
     isCompleted: boolean;
@@ -86,7 +91,8 @@ export class EnglishVocabularyTrainer {
   }
 
   private isCorrectLetter(letter: string): boolean {
-    const { letters, currentLetterIdx } = this.questions[this.currentQuestionIdx];
+    const { letters, currentLetterIdx } =
+      this.questions[this.currentQuestionIdx];
 
     return letter === letters[currentLetterIdx];
   }
@@ -94,11 +100,17 @@ export class EnglishVocabularyTrainer {
   private isLastLetter(): boolean {
     const currentTrainingStep = this.questions[this.currentQuestionIdx];
 
-    return currentTrainingStep.currentLetterIdx === currentTrainingStep.letters.length;
+    return (
+      currentTrainingStep.currentLetterIdx ===
+      currentTrainingStep.letters.length
+    );
   }
 
   private isLastMistake(): boolean {
-    return this.questions[this.currentQuestionIdx].mistakesCount === this.maxMistakesCount;
+    return (
+      this.questions[this.currentQuestionIdx].mistakesCount ===
+      this.maxMistakesCount
+    );
   }
 
   public isLastQuestion(): boolean {
@@ -115,7 +127,7 @@ export class EnglishVocabularyTrainer {
     const firstSameLetterIdx = question.letters[question.currentLetterIdx];
 
     question.taskLetters = question.taskLetters.filter(
-      (_, idx) => idx !== (prevLetterIdx ?? firstSameLetterIdx),
+      (_, idx) => idx !== (prevLetterIdx ?? firstSameLetterIdx)
     );
   }
 
