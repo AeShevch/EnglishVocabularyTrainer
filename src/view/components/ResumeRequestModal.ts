@@ -12,7 +12,7 @@ const getRequestModalTemplate = (): string =>
         </div>
         <div class="modal-footer">
           <button type="button" class="js-close-modal btn btn-secondary" data-bs-dismiss="modal">Start again</button>
-          <button type="button" class="js-resume-training btn btn-primary">Resume last training</button>
+          <button autofocus type="button" class="js-resume-training btn btn-primary">Resume last training</button>
         </div>
       </div>
     </div>
